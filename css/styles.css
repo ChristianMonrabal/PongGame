@@ -1,0 +1,102 @@
+/* Estilos generales */
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+    font-family: Arial, sans-serif;
+    color: white;
+    overflow: hidden; /* Evita el desbordamiento del contenido */
+}
+
+/* Contenedor del menú */
+.menu-container {
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    max-width: 90%; /* Asegura que el contenedor no se expanda demasiado en pantallas pequeñas */
+    margin: auto;
+}
+
+/* Estilo del título */
+.menu-container h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    color: #f1f1f1;
+}
+
+/* Estilo del párrafo */
+.menu-container p {
+    font-size: 1.2rem;
+    margin-bottom: 40px;
+    color: #d1d1d1;
+}
+
+/* Estilo de los botones */
+.menu-button {
+    display: inline-block;
+    padding: 15px 30px;
+    margin: 20px;
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    transition: background-color 0.3s ease;
+}
+
+.menu-button:hover {
+    background-color: #45a049;
+}
+
+.menu-button:active {
+    transform: scale(0.95);
+}
+
+/* Ajustes responsivos */
+@media (max-width: 600px) {
+    .menu-container h1 {
+        font-size: 2rem;
+    }
+
+    .menu-button {
+        font-size: 1rem;
+        padding: 10px 20px;
+        margin: 10px;
+    }
+}
+
+/* Ajustes para orientación vertical en dispositivos móviles */
+@media (orientation: portrait) and (max-width: 600px) {
+    body {
+        display: block; /* Cambia el comportamiento de flex a bloque para permitir el ajuste */
+        overflow-y: auto; /* Permite el desplazamiento vertical en caso de contenido largo */
+    }
+
+    .menu-container {
+        width: 100vw;
+        height: 100vh;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+}
+
+/* Ajustes para orientación horizontal en dispositivos móviles */
+@media (orientation: landscape) and (max-width: 600px) {
+    body {
+        display: block; /* Cambia el comportamiento de flex a bloque para permitir el ajuste */
+        overflow: hidden; /* Evita el desbordamiento del contenido */
+    }
+
+    .menu-container {
+        width: 100vw;
+        height: 100vh;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+}

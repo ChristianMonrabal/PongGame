@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pong Game</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/game.css">
+    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="shortcut icon" href="../img/favicon.png" type="image/x-icon">
+</head>
+<body>
+    <div class="container text-center">
+        <div id="scoreboard" class="d-flex justify-content-between mx-auto">
+            <div id="playerScore" class="score green">0</div>
+            <div id="computerScore" class="score red">0</div>
+        </div>
+        <div id="gameContainer" class="mx-auto position-relative">
+            <div id="celebration" class="hidden"></div>
+            <div id="midLine"></div>
+            <div id="playerArea" class="area"></div>
+            <div id="computerArea" class="area"></div>
+            <div id="playerPaddle" class="paddle"></div>
+            <div id="computerPaddle" class="paddle"></div>
+            <div id="ball"></div>
+        </div>
+        <button id="resetButton" class="custom-button mt-3">Reiniciar Juego</button>
+        <button id="returnbutton" class="custom-button mt-3">Volver al menú</button>        
+    </div>
+    <script src="../js/singleplayer.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
