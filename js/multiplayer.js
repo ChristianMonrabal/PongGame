@@ -17,25 +17,49 @@ let ballX = gameContainer.offsetWidth / 2;
 let ballY = gameContainer.offsetHeight / 2;
 let ballSpeedX = 5;
 let ballSpeedY = 5;
-let paddleSpeed = 30;
+let paddleSpeed = 20; // Velocidad de las paletas
+
+// Estado de las teclas
+let keysPressed = {};
 
 // Inicializar posiciones de las paletas
 player1Paddle.style.top = player1PaddleY + 'px';
 player2Paddle.style.top = player2PaddleY + 'px';
 
+// Establecer las posiciones iniciales horizontales de las paletas
+player1Paddle.style.left = '10px'; // Jugador 1 a la izquierda
+player2Paddle.style.left = (gameContainer.offsetWidth - player2Paddle.offsetWidth - 10) + 'px'; // Jugador 2 a la derecha
+
+// Asegurar que ambas palas tienen el mismo tamaño
+player1Paddle.style.width = '10px';
+player2Paddle.style.width = '10px';
+player1Paddle.style.height = '100px';
+player2Paddle.style.height = '100px';
+
 // Manejo de eventos de teclado
 document.addEventListener('keydown', function(event) {
+    keysPressed[event.key] = true;
+});
+
+document.addEventListener('keyup', function(event) {
+    keysPressed[event.key] = false;
+});
+
+// Función para mover las paletas
+function movePaddles() {
     // Controles del Jugador 1 (W y S)
-    if (event.key === 'w') {
+    if (keysPressed['w']) {
         player1PaddleY -= paddleSpeed;
-    } else if (event.key === 's') {
+    }
+    if (keysPressed['s']) {
         player1PaddleY += paddleSpeed;
     }
 
     // Controles del Jugador 2 (Flechas arriba y abajo)
-    if (event.key === 'ArrowUp') {
+    if (keysPressed['ArrowUp']) {
         player2PaddleY -= paddleSpeed;
-    } else if (event.key === 'ArrowDown') {
+    }
+    if (keysPressed['ArrowDown']) {
         player2PaddleY += paddleSpeed;
     }
 
@@ -46,7 +70,7 @@ document.addEventListener('keydown', function(event) {
     // Actualiza las posiciones de las paletas
     player1Paddle.style.top = player1PaddleY + 'px';
     player2Paddle.style.top = player2PaddleY + 'px';
-});
+}
 
 // Función para mover la bola
 function moveBall() {
@@ -60,14 +84,18 @@ function moveBall() {
 
     // Rebote en la paleta del Jugador 1
     if (ballX <= player1Paddle.offsetLeft + player1Paddle.offsetWidth &&
-        ballY >= player1PaddleY && ballY <= player1PaddleY + player1Paddle.offsetHeight) {
+        ballX + ball.offsetWidth >= player1Paddle.offsetLeft &&  // Asegurar la colisión completa en X
+        ballY + ball.offsetHeight >= player1PaddleY && // Colisión en Y desde la parte superior de la bola
+        ballY <= player1PaddleY + player1Paddle.offsetHeight) { // Colisión en Y desde la parte inferior de la bola
         ballSpeedX *= -1;
         increaseBallSpeed();
     }
 
     // Rebote en la paleta del Jugador 2
-    if (ballX >= player2Paddle.offsetLeft - ball.offsetWidth &&
-        ballY >= player2PaddleY && ballY <= player2PaddleY + player2Paddle.offsetHeight) {
+    if (ballX + ball.offsetWidth >= player2Paddle.offsetLeft &&
+        ballX <= player2Paddle.offsetLeft + player2Paddle.offsetWidth && // Asegurar la colisión completa en X
+        ballY + ball.offsetHeight >= player2PaddleY && // Colisión en Y desde la parte superior de la bola
+        ballY <= player2PaddleY + player2Paddle.offsetHeight) { // Colisión en Y desde la parte inferior de la bola
         ballSpeedX *= -1;
         increaseBallSpeed();
     }
@@ -109,8 +137,8 @@ function resetBall() {
 
 // Función para incrementar la velocidad de la bola
 function increaseBallSpeed() {
-    ballSpeedX *= 1.1;
-    ballSpeedY *= 1.1;
+    ballSpeedX *= 1.2; // Aumenta la velocidad en un 20% en cada rebote
+    ballSpeedY *= 1.2;
 }
 
 // Función para mostrar la celebración de un gol
@@ -129,9 +157,10 @@ resetButton.addEventListener('click', function() {
     resetBall();
 });
 
-// Movimiento constante de la bola y actualización del juego
+// Movimiento constante de la bola, paletas y actualización del juego
 setInterval(function() {
-    moveBall();
+    movePaddles(); // Mover paletas continuamente
+    moveBall();    // Mover bola
 }, 30);
 
 returnbutton.addEventListener('click', function() {

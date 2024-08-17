@@ -1,3 +1,4 @@
+// Referencias a los elementos del DOM
 const gameContainer = document.getElementById('gameContainer');
 const playerPaddle = document.getElementById('playerPaddle');
 const computerPaddle = document.getElementById('computerPaddle');
@@ -7,37 +8,66 @@ const computerScoreDisplay = document.getElementById('computerScore');
 const celebration = document.getElementById('celebration');
 const resetButton = document.getElementById('resetButton');
 
+// Variables de estado del juego
 let playerScore = 0;
 let computerScore = 0;
-let playerPaddleY = 0;
-let computerPaddleY = 0;
-let ballX = 400;
-let ballY = 300;
-let ballSpeedX = 6; // Aumenta la velocidad inicial de la pelota
-let ballSpeedY = 6; // Aumenta la velocidad inicial de la pelota
-let paddleSpeed = 60; // Aumenta la velocidad de la paleta del jugador // <--- Aquí se ajusta la velocidad del jugador
-let computerSpeed = 30; // Aumenta la velocidad de la paleta de la máquina // <--- Aquí se ajusta la velocidad de la máquina
+let playerPaddleY = gameContainer.offsetHeight / 2 - playerPaddle.offsetHeight / 2;
+let computerPaddleY = gameContainer.offsetHeight / 2 - computerPaddle.offsetHeight / 2;
+let ballX = gameContainer.offsetWidth / 2;
+let ballY = gameContainer.offsetHeight / 2;
+let ballSpeedX = 6; 
+let ballSpeedY = 6; 
+let paddleSpeed = 20; 
+let computerSpeed = 5; // Velocidad base más baja para suavizar el movimiento
+let computerMaxSpeed = 20; // Velocidad máxima que la paleta puede alcanzar
 
+// Estado de las teclas
+let keysPressed = {};
+
+// Inicializar posiciones de las paletas
+playerPaddle.style.top = playerPaddleY + 'px';
+computerPaddle.style.top = computerPaddleY + 'px';
+
+// Manejo de eventos de teclado
 document.addEventListener('keydown', function(event) {
-    if (event.key === 'ArrowUp') {
-        playerPaddleY -= paddleSpeed;
-    } else if (event.key === 'ArrowDown') {
-        playerPaddleY += paddleSpeed;
-    }
-    playerPaddleY = Math.max(0, Math.min(gameContainer.offsetHeight - playerPaddle.offsetHeight, playerPaddleY));
-    playerPaddle.style.top = playerPaddleY + 'px';
+    keysPressed[event.key] = true;
 });
 
-function moveComputerPaddle() {
-    if (ballY > computerPaddleY + computerPaddle.offsetHeight / 2) {
-        computerPaddleY += computerSpeed; // La máquina se mueve más rápido hacia abajo
-    } else {
-        computerPaddleY -= computerSpeed; // La máquina se mueve más rápido hacia arriba
+document.addEventListener('keyup', function(event) {
+    keysPressed[event.key] = false;
+});
+
+// Función para mover la paleta del jugador
+function movePlayerPaddle() {
+    if (keysPressed['ArrowUp']) {
+        playerPaddleY -= paddleSpeed;
     }
+    if (keysPressed['ArrowDown']) {
+        playerPaddleY += paddleSpeed;
+    }
+
+    playerPaddleY = Math.max(0, Math.min(gameContainer.offsetHeight - playerPaddle.offsetHeight, playerPaddleY));
+
+    playerPaddle.style.top = playerPaddleY + 'px';
+}
+
+// Función para mover la paleta de la computadora suavemente
+function moveComputerPaddle() {
+    let targetY = ballY - computerPaddle.offsetHeight / 2; // La posición objetivo es el centro de la paleta alineado con la pelota
+    let deltaY = targetY - computerPaddleY; // Diferencia entre la posición actual y la objetivo
+
+    if (Math.abs(deltaY) > computerSpeed) {
+        computerPaddleY += Math.sign(deltaY) * Math.min(computerMaxSpeed, Math.abs(deltaY));
+    } else {
+        computerPaddleY += deltaY;
+    }
+
     computerPaddleY = Math.max(0, Math.min(gameContainer.offsetHeight - computerPaddle.offsetHeight, computerPaddleY));
+
     computerPaddle.style.top = computerPaddleY + 'px';
 }
 
+// Función para mover la bola
 function moveBall() {
     ballX += ballSpeedX;
     ballY += ballSpeedY;
@@ -50,17 +80,20 @@ function moveBall() {
 
     // Rebote en la paleta del jugador
     if (ballX <= playerPaddle.offsetLeft + playerPaddle.offsetWidth &&
-        ballY >= playerPaddleY && ballY <= playerPaddleY + playerPaddle.offsetHeight) {
+        ballX + ball.offsetWidth >= playerPaddle.offsetLeft &&
+        ballY + ball.offsetHeight >= playerPaddleY &&
+        ballY <= playerPaddleY + playerPaddle.offsetHeight) {
         ballSpeedX *= -1;
         increaseBallSpeed();
     }
 
     // Rebote en la paleta de la computadora
-    if (ballX >= computerPaddle.offsetLeft - ball.offsetWidth &&
-        ballY >= computerPaddleY && ballY <= computerPaddleY + computerPaddle.offsetHeight) {
+    if (ballX + ball.offsetWidth >= computerPaddle.offsetLeft &&
+        ballX <= computerPaddle.offsetLeft + computerPaddle.offsetWidth &&
+        ballY + ball.offsetHeight >= computerPaddleY &&
+        ballY <= computerPaddleY + computerPaddle.offsetHeight) {
         ballSpeedX *= -1;
         increaseBallSpeed();
-        ballSpeedX *= 1.1; // Aumenta la velocidad de la pelota cuando la máquina la golpea
     }
 
     // Gol del jugador
@@ -79,20 +112,24 @@ function moveBall() {
         resetBall();
     }
 
+    // Actualiza la posición de la bola
     ball.style.left = ballX + 'px';
     ball.style.top = ballY + 'px';
 }
 
+// Función para incrementar la velocidad de la bola
 function increaseBallSpeed() {
-    ballSpeedX *= 1.1; // Incrementa la velocidad de la pelota en cada rebote
-    ballSpeedY *= 1.1; // Incrementa la velocidad de la pelota en cada rebote
+    ballSpeedX *= 1.2; 
+    ballSpeedY *= 1.2; 
 }
 
+// Función para actualizar el marcador
 function updateScoreboard() {
     playerScoreDisplay.textContent = playerScore;
     computerScoreDisplay.textContent = computerScore;
 }
 
+// Función para mostrar la celebración de un gol
 function showCelebration(text, colorClass) {
     celebration.textContent = text;
     celebration.className = colorClass;
@@ -102,6 +139,7 @@ function showCelebration(text, colorClass) {
     }, 1000);
 }
 
+// Función para resetear la posición de la bola
 function resetBall() {
     ballX = gameContainer.offsetWidth / 2 - ball.offsetWidth / 2;
     ballY = gameContainer.offsetHeight / 2 - ball.offsetHeight / 2;
@@ -109,6 +147,7 @@ function resetBall() {
     ballSpeedY = 6;
 }
 
+// Evento para reiniciar el juego
 resetButton.addEventListener('click', function() {
     playerScore = 0;
     computerScore = 0;
@@ -116,9 +155,11 @@ resetButton.addEventListener('click', function() {
     resetBall();
 });
 
+// Movimiento constante de la bola, paletas y actualización del juego
 setInterval(function() {
-    moveBall();
-    moveComputerPaddle();
+    movePlayerPaddle(); 
+    moveComputerPaddle(); 
+    moveBall(); 
 }, 30);
 
 returnbutton.addEventListener('click', function() {

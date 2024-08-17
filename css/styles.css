@@ -70,33 +70,3 @@ body {
         margin: 10px;
     }
 }
-
-/* Ajustes para orientación vertical en dispositivos móviles */
-@media (orientation: portrait) and (max-width: 600px) {
-    body {
-        display: block; /* Cambia el comportamiento de flex a bloque para permitir el ajuste */
-        overflow-y: auto; /* Permite el desplazamiento vertical en caso de contenido largo */
-    }
-
-    .menu-container {
-        width: 100vw;
-        height: 100vh;
-        padding: 20px;
-        box-sizing: border-box;
-    }
-}
-
-/* Ajustes para orientación horizontal en dispositivos móviles */
-@media (orientation: landscape) and (max-width: 600px) {
-    body {
-        display: block; /* Cambia el comportamiento de flex a bloque para permitir el ajuste */
-        overflow: hidden; /* Evita el desbordamiento del contenido */
-    }
-
-    .menu-container {
-        width: 100vw;
-        height: 100vh;
-        padding: 20px;
-        box-sizing: border-box;
-    }
-}
