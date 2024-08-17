@@ -15,8 +15,8 @@ let player1PaddleY = gameContainer.offsetHeight / 2 - player1Paddle.offsetHeight
 let player2PaddleY = gameContainer.offsetHeight / 2 - player2Paddle.offsetHeight / 2;
 let ballX = gameContainer.offsetWidth / 2;
 let ballY = gameContainer.offsetHeight / 2;
-let ballSpeedX = 5;
-let ballSpeedY = 5;
+let ballSpeedX = 6;
+let ballSpeedY = 6;
 let paddleSpeed = 20; // Velocidad de las paletas
 
 // Estado de las teclas
