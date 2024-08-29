@@ -15,13 +15,11 @@ let playerPaddleY = gameContainer.offsetHeight / 2 - playerPaddle.offsetHeight /
 let computerPaddleY = gameContainer.offsetHeight / 2 - computerPaddle.offsetHeight / 2;
 let ballX = gameContainer.offsetWidth / 2;
 let ballY = gameContainer.offsetHeight / 2;
-let ballSpeedX = 6; 
-let ballSpeedY = 6; 
-let paddleSpeed = 20; 
-let computerSpeed = 5; // Velocidad base más baja para suavizar el movimiento
+let ballSpeedX = 6;
+let ballSpeedY = 6;
+let paddleSpeed = 20;
+let computerSpeed = 30; // Aumentar la velocidad de la computadora para seguir la bola mejor
 let computerMaxSpeed = 20; // Velocidad máxima que la paleta puede alcanzar
-
-// Estado de las teclas
 let keysPressed = {};
 
 // Inicializar posiciones de las paletas
@@ -29,11 +27,11 @@ playerPaddle.style.top = playerPaddleY + 'px';
 computerPaddle.style.top = computerPaddleY + 'px';
 
 // Manejo de eventos de teclado
-document.addEventListener('keydown', function(event) {
+document.addEventListener('keydown', function (event) {
     keysPressed[event.key] = true;
 });
 
-document.addEventListener('keyup', function(event) {
+document.addEventListener('keyup', function (event) {
     keysPressed[event.key] = false;
 });
 
@@ -47,27 +45,27 @@ function movePlayerPaddle() {
     }
 
     playerPaddleY = Math.max(0, Math.min(gameContainer.offsetHeight - playerPaddle.offsetHeight, playerPaddleY));
-
     playerPaddle.style.top = playerPaddleY + 'px';
 }
 
-// Función para mover la paleta de la computadora suavemente
+// Función para mover la paleta de la computadora rápidamente siguiendo la bola
 function moveComputerPaddle() {
-    let targetY = ballY - computerPaddle.offsetHeight / 2; // La posición objetivo es el centro de la paleta alineado con la pelota
+    let targetY = ballY - computerPaddle.offsetHeight / 2; // Posición objetivo al centro de la bola
     let deltaY = targetY - computerPaddleY; // Diferencia entre la posición actual y la objetivo
 
+    // Movimiento agresivo y rápido hacia la bola
     if (Math.abs(deltaY) > computerSpeed) {
         computerPaddleY += Math.sign(deltaY) * Math.min(computerMaxSpeed, Math.abs(deltaY));
     } else {
         computerPaddleY += deltaY;
     }
 
+    // Limita la posición de la paleta para que no salga del contenedor
     computerPaddleY = Math.max(0, Math.min(gameContainer.offsetHeight - computerPaddle.offsetHeight, computerPaddleY));
-
     computerPaddle.style.top = computerPaddleY + 'px';
 }
 
-// Función para mover la bola
+// Función para mover la bola con ajuste para rebote seguro
 function moveBall() {
     ballX += ballSpeedX;
     ballY += ballSpeedY;
@@ -79,20 +77,28 @@ function moveBall() {
     }
 
     // Rebote en la paleta del jugador
-    if (ballX <= playerPaddle.offsetLeft + playerPaddle.offsetWidth &&
+    if (
+        ballX <= playerPaddle.offsetLeft + playerPaddle.offsetWidth &&
         ballX + ball.offsetWidth >= playerPaddle.offsetLeft &&
         ballY + ball.offsetHeight >= playerPaddleY &&
-        ballY <= playerPaddleY + playerPaddle.offsetHeight) {
-        ballSpeedX *= -1;
+        ballY <= playerPaddleY + playerPaddle.offsetHeight
+    ) {
+        // Ajustar la posición de la bola para evitar superposiciones
+        ballX = playerPaddle.offsetLeft + playerPaddle.offsetWidth;
+        ballSpeedX = Math.abs(ballSpeedX); // Asegura que rebota a la derecha
         increaseBallSpeed();
     }
 
     // Rebote en la paleta de la computadora
-    if (ballX + ball.offsetWidth >= computerPaddle.offsetLeft &&
+    if (
+        ballX + ball.offsetWidth >= computerPaddle.offsetLeft &&
         ballX <= computerPaddle.offsetLeft + computerPaddle.offsetWidth &&
         ballY + ball.offsetHeight >= computerPaddleY &&
-        ballY <= computerPaddleY + computerPaddle.offsetHeight) {
-        ballSpeedX *= -1;
+        ballY <= computerPaddleY + computerPaddle.offsetHeight
+    ) {
+        // Ajustar la posición de la bola para evitar superposiciones
+        ballX = computerPaddle.offsetLeft - ball.offsetWidth;
+        ballSpeedX = -Math.abs(ballSpeedX); // Asegura que rebota a la izquierda
         increaseBallSpeed();
     }
 
@@ -119,8 +125,8 @@ function moveBall() {
 
 // Función para incrementar la velocidad de la bola
 function increaseBallSpeed() {
-    ballSpeedX *= 1.2; 
-    ballSpeedY *= 1.2; 
+    ballSpeedX *= 1.1; // Incrementa la velocidad de forma controlada
+    ballSpeedY *= 1.1;
 }
 
 // Función para actualizar el marcador
@@ -148,7 +154,7 @@ function resetBall() {
 }
 
 // Evento para reiniciar el juego
-resetButton.addEventListener('click', function() {
+resetButton.addEventListener('click', function () {
     playerScore = 0;
     computerScore = 0;
     updateScoreboard();
@@ -156,12 +162,8 @@ resetButton.addEventListener('click', function() {
 });
 
 // Movimiento constante de la bola, paletas y actualización del juego
-setInterval(function() {
-    movePlayerPaddle(); 
-    moveComputerPaddle(); 
-    moveBall(); 
+setInterval(function () {
+    movePlayerPaddle();
+    moveComputerPaddle();
+    moveBall();
 }, 30);
-
-returnbutton.addEventListener('click', function() {
-    window.location.href = '../index.html';
-});
